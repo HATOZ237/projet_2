@@ -20,10 +20,11 @@ class Quoridor:
             raise QuoridorError
         état = self.état_partie()
         graphe = construire_graphe(
-        [joueur['pos'] for joueur in état['joueurs']], 
-        état['murs']['horizontaux'],
-        état['murs']['verticaux']
-)
+            [joueur['pos'] for joueur in état['joueurs']],
+            état['murs']['horizontaux'],
+            état['murs']['verticaux']
+        )
+
 
 def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
     """
