@@ -10,9 +10,10 @@ class Quoridor:
     def __init__(self, joueurs, murs=None):
         self.joueurs = joueurs
         self.murs = murs
+        self.état = joueurs
 
     def état_partie(self):
-        return self.état[]
+        return self.état
 
     def jouer_coup(self, joueur):
         if joueur != 1 or joueur != 2:
