@@ -8,22 +8,43 @@ class QuoridorError(BaseException):
 class Quoridor:
 
     def __init__(self, joueurs, murs=None):
+        """j'ai ecrit du n'importe quoi ici donc ne regarde pas ça"""
         self.joueurs = joueurs
         self.murs = murs
         self.état = joueurs
 
     def état_partie(self):
+        """j'ai encore des amelioratons à faire"""
         return self.état
 
     def jouer_coup(self, joueur):
+        """ à un niveau je ne compends plus ce que je fais donc laisse seulement"""
         if joueur != 1 or joueur != 2:
+            raise QuoridorError
+        if self.partie_terminée() != False:
             raise QuoridorError
         état = self.état_partie()
         graphe = construire_graphe(
             [joueur['pos'] for joueur in état['joueurs']],
             état['murs']['horizontaux'],
-            état['murs']['verticaux']
-        )
+            état['murs']['verticaux'])
+        if joueur == 0:
+            path = nx.shortest_path(graphe, état['joueurs'][joueur]['pos'], (5, 10))
+            return path[0]
+        if joueur == 1:
+            path = nx.shortest_path(graphe, état['joueurs'][joueur]['pos'], (5, 0))
+            return path[0]
+
+
+    def partie_terminée(self):
+        """ ici je m'interesse seulement de savoir si le pion 1 est arrive à la position (x, 9) et donc il a gagne quel que soit x"""
+        if self.état['joueurs'][0]['pos'][1] == 9:
+            return self.état['joueurs'][0]['nom']
+        # si le pion 2 est à la position (x, 1) alors c"est le serveur qui gagne
+        elif self.état['joueurs'][1]['pos'][1] == 1:
+            return self.état['joueurs'][1]['nom']
+        else:
+            return False
 
 
 def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
@@ -35,7 +56,7 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
     :param murs_verticaux: une liste des positions (x,y) des murs verticaux.
     :returns: le graphe bidirectionnel (en networkX) des déplacements admissibles.
     """
-    graphe = nx.DiGraph()
+    graphe=nx.DiGraph()
 
     # pour chaque colonne du damier
     for x in range(1, 10):
@@ -73,7 +94,7 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
             graphe.remove_edge(prédécesseur, joueur)
 
             # si admissible, ajouter un lien sauteur
-            successeur = (2*joueur[0]-prédécesseur[0],
+            successeur=(2*joueur[0]-prédécesseur[0],
                           2*joueur[1]-prédécesseur[1])
 
             if successeur in graphe.successors(joueur) and successeur not in joueurs:
