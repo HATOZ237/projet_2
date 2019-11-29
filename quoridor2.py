@@ -254,7 +254,8 @@ class Quoridor:
         #si le joueur a déjà placé tous ses murs
         if self.partie['état']['joueurs'][joueur-1]['murs'] == 0:
             raise QuoridorError
-
+        
+        #insertion des murs horizontaux et verticaux 
         if orientation == 'vertical':
             self.partie['état'] = (self.partie['état']['murs']['verticaux']).append(position)
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
