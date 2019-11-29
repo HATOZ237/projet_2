@@ -19,7 +19,7 @@ class Quoridor:
 
     def jouer_coup(self, joueur):
         """ à un niveau je ne compends plus ce que je fais donc laisse seulement"""
-        if joueur != 1 or joueur != 2:
+        if joueur != 1 and joueur != 2:
             raise QuoridorError
         if self.partie_terminée() != False:
             raise QuoridorError
@@ -45,6 +45,27 @@ class Quoridor:
             return self.état['joueurs'][1]['nom']
         else:
             return False
+    
+    def placer_mur(self, joueur, position, orientation):
+        a, b = position
+        if not((1 <= a <= 8) and (1 <= b <= 8)):
+            raise QuoridorError
+        if joueur !=1 and joueur != 2:
+            raise QuoridorError
+        for mur in self.état['murs']['horizontaux']:
+            if position == mur:
+                raise QuoridorError
+        for mur in self.état['murs']['verticaux']:
+            if mur == position:
+                raise QuoridorError
+        if self.état['joueurs'][joueur]['murs'] == 0:
+            raise QuoridorError
+        if orientation == 'vertical':
+            self.état = self.état['murs']['verticaux'].append(position)
+            self.état['joueurs'][joueur]['murs'] -= 1
+        if orientation == 'horizontal':
+            self.état == self.état['murs']['horizontaux'].append(position)
+            self.état['joueurs'][joueur]['murs'] -= 1
 
 
 def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
