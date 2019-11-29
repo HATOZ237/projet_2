@@ -1,24 +1,196 @@
 import networkx as nx
+from copy import deepcopy
 
 
-class QuoridorError(BaseException):
+class QuoridorError(Exception):
     pass
 
 
 class Quoridor:
 
     def __init__(self, joueurs, murs=None):
-        """j'ai ecrit du n'importe quoi ici donc ne regarde pas ça"""
-        self.joueurs = joueurs
-        self.murs = murs
-        self.état = joueurs
+        """
+        Initialiser une partie de Quoridor avec les joueurs et les murs spécifiés,
+        en s'assurant de faire une copie profonde de tout ce qui a besoin d'être copié.
+        """
+        # -----------------conditions--------------------
+
+        # si joueurs n'est pas itérable
+        if(not isinstance(joueurs, list) and not isinstance(joueurs, tuple) and not isinstance(joueurs, dict)):
+            raise QuoridorError
+
+        # si l'itérable de joueurs en contient plus de deux.
+        if (len(joueurs) > 2):
+            raise QuoridorError
+
+        for joueur in joueurs:
+            if(isinstance(joueur, dict)):
+                # si le nombre de murs qu'un joueur peut placer est >10, ou négatif
+                if joueur['murs'] > 10 or joueur['murs'] < 0:
+                    raise QuoridorError
+
+                # si la position d'un joueur est invalide
+                for coord_pos in joueur['pos']:
+                    if not (coord_pos in range(1, 10)):
+                        raise QuoridorError
+
+        # si murs n'est pas un dictionnaire lorsque présent.
+        if(murs != None and not(isinstance(murs, dict))):
+            raise QuoridorError
+
+        # si le total des murs placés et plaçables n'est pas égal à 20
+        count = 0
+        for joueur in joueurs:
+            if(isinstance(joueur, str)):
+                count += 10
+            elif(isinstance(joueur, dict)):
+                count += int(joueur['murs'])
+        if(murs != None):
+            count += len(murs['horizontaux'])
+            count += len(murs['verticaux'])
+        if(count != 20):
+            raise QuoridorError
+
+        # si la position d'un mur est invalide.
+        if(murs != None):
+            for coord_pos in murs['horizontaux']:
+                if not (coord_pos[0] in range(1, 9)) or not (coord_pos[1] in range(2, 10)):
+                    raise QuoridorError
+            for coord_pos in murs['verticaux']:
+                if not (coord_pos[0] in range(2, 10)) or not (coord_pos[1] in range(1, 9)):
+                    raise QuoridorError
+
+        # ------------------------initialisation---------------
+
+        partie = {}
+        # initialisation des joueurs
+        if isinstance(joueurs, list):
+            pass
+        if isinstance(joueurs, tuple):
+            joueurs = list(joueurs)
+        if isinstance(joueurs, dict):
+            joueurs = list(joueurs[i] for i in joueurs.keys())
+
+        partie_joueurs = []
+        for indice, joueur in enumerate(joueurs):
+            if(isinstance(joueur, str)):
+                if(indice == 0):
+                    j = {'nom': joueur, 'murs': 10, 'pos': [5, 1]}
+                else:
+                    j = {'nom': joueur, 'murs': 10, 'pos': [5, 9]}
+            elif(isinstance(joueur, dict)):
+                j = {'nom': joueur['nom'],
+                     'murs': joueur['murs'], 'pos': joueur['pos']}
+            partie_joueurs.append(j)
+
+        # initialisation des murs
+        mur_horizontaux = mur_verticaux = []
+        if(murs != None):
+            mur_horizontaux = murs['horizontaux']
+            mur_verticaux = murs['verticaux']
+
+        # initialisation de l'état de la partie
+        partie['état'] = {'joueurs': partie_joueurs,
+                          'murs': {'horizontaux': mur_horizontaux, 'verticaux': mur_verticaux}}
+
+        self.partie = partie
+
+    def __str__(self):
+        """
+        Produire la représentation en art ascii correspondant à l'état actuel de la partie.
+        Cette représentation est la même que celle du TP précédent.
+
+        retourner : la chaîne de caractères de la représentation.
+        """
+        état_partie = deepcopy(self.partie['état'])
+        # creation d'une matrice vide
+        ligne = 21
+        colone = 39
+        numerotation = 9
+        matrice = []
+        place1 = état_partie["joueurs"][0]['nom']
+        place2 = état_partie["joueurs"][1]['nom']
+        matrice.append(['Légende: 1={}, 2={}'.format(place1, place2)])
+        matrice.append(['   -----------------------------------'])
+        for i in range(2, ligne-2):
+            matrice.append([' ']*colone)
+        matrice.append(['--|-----------------------------------'])
+        matrice.append(['  | 1   2   3   4   5   6   7   8   9'])
+        for i in range(2, ligne-2):
+            matrice[i][2] = '|'
+            matrice[i][38] = '|'
+            if (i % 2) == 0:
+                matrice[i][0] = str(numerotation)
+                numerotation -= 1
+                for j in range(1, 10):
+                    matrice[i][4*j] = '.'
+        # déchiffrage du json
+        j1 = état_partie["joueurs"][0]["pos"]
+        j2 = état_partie["joueurs"][1]["pos"]
+        mh = état_partie["murs"]["horizontaux"]
+        mv = état_partie["murs"]["verticaux"]
+
+        # incorporation des élements du jeu : joueurs et murs
+        # convertit les coordonnées des joueurs
+        for i in [j1, j2]:
+            i[0], i[1] = 2*(10-i[1]), i[0]*4
+            # convertit les coordonnées des murs horizontaux
+        for i in mh:
+            i[0], i[1] = 2*(10-i[1])+1, 4*i[0]-1
+            # convertit les coordonnées des murs verticaux
+        for i in mv:
+            i[0], i[1] = 2*(10-i[1])-2, 4*i[0]-2
+            # insère les murs horizontaux
+        for i in mh:
+            for j in range(i[1], i[1]+7):
+                matrice[i[0]][j] = '-'
+            # insère les murs verticaux
+        for i in mv:
+            for j in range(i[0], i[0]+3):
+                matrice[j][i[1]] = '|'
+
+            # insère les joueurs
+        matrice[j1[0]][j1[1]] = '1'
+        matrice[j2[0]][j2[1]] != '2'
+        # convertit la matrice en chaine
+        for indice, mat1 in enumerate(matrice):
+            matrice[indice] = ''.join(mat1)
+        return '\n'.join(matrice)
 
     def état_partie(self):
-        """j'ai encore des amelioratons à faire"""
-        return self.état
+        """Produire l'état actuel de la partie."""
+        return self.partie['état']
+
+    def déplacer_jeton(self, joueur, position):
+        """
+        Pour le joueur spécifié, déplacer son jeton à la position spécifiée.
+        """
+        état = self.état_partie()
+        graphe = construire_graphe(
+            [player['pos'] for player in état['joueurs']],
+            état['murs']['horizontaux'],
+            état['murs']['verticaux'])
+
+        # si le numéro du joueur est autre que 1 ou 2
+        if not(joueur in [1, 2]):
+            raise QuoridorError
+
+        # si la position est invalide(en dehors du damier)
+        for coord_pos in position:
+            if not (coord_pos in range(1, 10)):
+                raise QuoridorError
+
+        # si la position est invalide pour l'état actuel du jeu
+        possibilité = list(graphe.successors(
+            tuple(self.partie['état']["joueurs"][joueur-1]["pos"])))
+        if not(position in possibilité):
+            raise QuoridorError
+        else:
+            self.partie['état']["joueurs"][joueur-1]["pos"] = list(position)
 
     def jouer_coup(self, joueur):
-        """ à un niveau je ne compends plus ce que je fais donc laisse seulement"""
+        """ à un niveau je ne compends plus ce que je fais donc 
+        laisse seulement"""
         if joueur != 1 and joueur != 2:
             raise QuoridorError
         if self.partie_terminée() != False:
@@ -38,7 +210,10 @@ class Quoridor:
             return path[0]
 
     def partie_terminée(self):
-        """ ici je m'interesse seulement de savoir si le pion 1 est arrive à la position (x, 9) et donc il a gagne quel que soit x"""
+        """ ici je m'interesse seulement de savoir 
+        si le pion 1 est arrive à la position (x, 9) 
+        et donc il a gagne quel que soit x"""
+
         if self.état['joueurs'][0]['pos'][1] == 9:
             return self.état['joueurs'][0]['nom']
         # si le pion 2 est à la position (x, 1) alors c"est le serveur qui gagne
@@ -72,11 +247,6 @@ class Quoridor:
 def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
     """
     Crée le graphe des déplacements admissibles pour les joueurs.
-
-    :param joueurs: une liste des positions (x,y) des joueurs.
-    :param murs_horizontaux: une liste des positions (x,y) des murs horizontaux.
-    :param murs_verticaux: une liste des positions (x,y) des murs verticaux.
-    :returns: le graphe bidirectionnel (en networkX) des déplacements admissibles.
     """
     graphe = nx.DiGraph()
 
@@ -135,3 +305,8 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 1), 'B2')
 
     return graphe
+
+
+Q1 = Quoridor([{'nom': 'tsmum',
+                'murs': 10, 'pos': [7, 8]}, 'robot'],
+              {'horizontaux': [], 'verticaux': []})
