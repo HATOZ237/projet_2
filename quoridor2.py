@@ -29,12 +29,13 @@ class Quoridor:
             état['murs']['horizontaux'],
             état['murs']['verticaux'])
         if joueur == 0:
-            path = nx.shortest_path(graphe, état['joueurs'][joueur]['pos'], (5, 10))
+            path = nx.shortest_path(
+                graphe, état['joueurs'][joueur]['pos'], (5, 10))
             return path[0]
         if joueur == 1:
-            path = nx.shortest_path(graphe, état['joueurs'][joueur]['pos'], (5, 0))
+            path = nx.shortest_path(
+                graphe, état['joueurs'][joueur]['pos'], (5, 0))
             return path[0]
-
 
     def partie_terminée(self):
         """ ici je m'interesse seulement de savoir si le pion 1 est arrive à la position (x, 9) et donc il a gagne quel que soit x"""
@@ -45,12 +46,12 @@ class Quoridor:
             return self.état['joueurs'][1]['nom']
         else:
             return False
-    
+
     def placer_mur(self, joueur, position, orientation):
         a, b = position
         if not((1 <= a <= 8) and (1 <= b <= 8)):
             raise QuoridorError
-        if joueur !=1 and joueur != 2:
+        if joueur != 1 and joueur != 2:
             raise QuoridorError
         for mur in self.état['murs']['horizontaux']:
             if position == mur:
@@ -77,7 +78,7 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
     :param murs_verticaux: une liste des positions (x,y) des murs verticaux.
     :returns: le graphe bidirectionnel (en networkX) des déplacements admissibles.
     """
-    graphe=nx.DiGraph()
+    graphe = nx.DiGraph()
 
     # pour chaque colonne du damier
     for x in range(1, 10):
@@ -115,7 +116,7 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
             graphe.remove_edge(prédécesseur, joueur)
 
             # si admissible, ajouter un lien sauteur
-            successeur=(2*joueur[0]-prédécesseur[0],
+            successeur = (2*joueur[0]-prédécesseur[0],
                           2*joueur[1]-prédécesseur[1])
 
             if successeur in graphe.successors(joueur) and successeur not in joueurs:
