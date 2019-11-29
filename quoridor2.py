@@ -97,9 +97,9 @@ class Quoridor:
 
     def __str__(self):
         """
-        Produire la représentation en art ascii correspondant à l'état actuel de la partie.
+        Produire la représentation en art ascii correspondant à l'état
+         actuel de la partie.
         Cette représentation est la même que celle du TP précédent.
-
         retourner : la chaîne de caractères de la représentation.
         """
         état_partie = deepcopy(self.partie['état'])
@@ -191,10 +191,14 @@ class Quoridor:
     def jouer_coup(self, joueur):
         """ à un niveau je ne compends plus ce que je fais donc 
         laisse seulement"""
-        if joueur != 1 and joueur != 2:
+        #si le numéro du joueur est autre que 1 ou 2
+        if not(joueur in [1,2]):
             raise QuoridorError
+
+        #si la partie est terminée
         if self.partie_terminée() != False:
             raise QuoridorError
+
         état = self.état_partie()
         graphe = construire_graphe(
             [joueur['pos'] for joueur in état['joueurs']],
@@ -210,38 +214,53 @@ class Quoridor:
             return path[0]
 
     def partie_terminée(self):
-        """ ici je m'interesse seulement de savoir 
-        si le pion 1 est arrive à la position (x, 9) 
-        et donc il a gagne quel que soit x"""
+        """ Déterminer si la partie est terminée."""
 
-        if self.état['joueurs'][0]['pos'][1] == 9:
+            #si le joueur 1 est à la position (x, 9)
+        if self.partie['état']['joueurs'][0]['pos'][1] == 9:
             return self.état['joueurs'][0]['nom']
-        # si le pion 2 est à la position (x, 1) alors c"est le serveur qui gagne
-        elif self.état['joueurs'][1]['pos'][1] == 1:
+            # si le joueur 2 est à la position (x, 1) 
+        elif self.partie['état']['joueurs'][1]['pos'][1] == 1:
             return self.état['joueurs'][1]['nom']
         else:
+            #si personne ne gagne
             return False
 
     def placer_mur(self, joueur, position, orientation):
-        a, b = position
-        if not((1 <= a <= 8) and (1 <= b <= 8)):
+        """
+        Pour le joueur spécifié, placer un mur à la position spécifiée.
+
+        """
+        #si le numéro du joueur est autre que 1 ou 2
+        if not(joueur in [1,2]):
             raise QuoridorError
-        if joueur != 1 and joueur != 2:
-            raise QuoridorError
-        for mur in self.état['murs']['horizontaux']:
+
+        #si un mur occupe déjà cette position
+        for mur in self.partie['état']['murs']['horizontaux']:
             if position == mur:
                 raise QuoridorError
-        for mur in self.état['murs']['verticaux']:
+        for mur in self.partie['état']['murs']['verticaux']:
             if mur == position:
                 raise QuoridorError
-        if self.état['joueurs'][joueur]['murs'] == 0:
+        #----------------tu as oublié de tenir compte de l'espace nééssaire pour un mur 
+        #-------cad tenir compte des murs adjacants car les murs sont de longeurs de deux cases
+        #-------Ne peut-on pas lister les positions disponobles pour les murs avec Networkx ??????
+        
+        #si la position est invalide pour cette orientation
+        [a, b] = position 
+        if not((1 <= a <= 8) and (1 <= b <= 8)):
             raise QuoridorError
+        
+        #si le joueur a déjà placé tous ses murs
+        if self.partie['état']['joueurs'][joueur-1]['murs'] == 0:
+            raise QuoridorError
+
         if orientation == 'vertical':
-            self.état = self.état['murs']['verticaux'].append(position)
-            self.état['joueurs'][joueur]['murs'] -= 1
+            self.partie['état'] = (self.partie['état']['murs']['verticaux']).append(position)
+            self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
         if orientation == 'horizontal':
-            self.état == self.état['murs']['horizontaux'].append(position)
-            self.état['joueurs'][joueur]['murs'] -= 1
+            self.partie['état'] == (self.partie['état']['murs']['horizontaux']).append(position)
+            self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
 
 
 def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
