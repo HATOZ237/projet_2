@@ -106,7 +106,7 @@ class Quoridor:
         # creation d'une matrice vide
         ligne = 21
         colone = 39
-        numerotation = 9
+        num = 9
         matrice = []
         place1 = état_partie["joueurs"][0]['nom']
         place2 = état_partie["joueurs"][1]['nom']
@@ -120,8 +120,8 @@ class Quoridor:
             matrice[i][2] = '|'
             matrice[i][38] = '|'
             if (i % 2) == 0:
-                matrice[i][0] = str(numerotation)
-                numerotation -= 1
+                matrice[i][0] = str(num)
+                num -= 1
                 for j in range(1, 10):
                     matrice[i][4*j] = '.'
         # déchiffrage du json
