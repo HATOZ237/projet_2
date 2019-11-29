@@ -218,10 +218,10 @@ class Quoridor:
 
             #si le joueur 1 est à la position (x, 9)
         if self.partie['état']['joueurs'][0]['pos'][1] == 9:
-            return self.état['joueurs'][0]['nom']
+            return self.partie['état']['joueurs'][0]['nom']
             # si le joueur 2 est à la position (x, 1) 
         elif self.partie['état']['joueurs'][1]['pos'][1] == 1:
-            return self.état['joueurs'][1]['nom']
+            return self.partie['état']['joueurs'][1]['nom']
         else:
             #si personne ne gagne
             return False
