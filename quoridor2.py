@@ -31,11 +31,11 @@ class Quoridor:
         if joueur == 0:
             path = nx.shortest_path(
                 graphe, état['joueurs'][joueur]['pos'], (5, 10))
-            return path[0]
+            return path[1]
         if joueur == 1:
             path = nx.shortest_path(
                 graphe, état['joueurs'][joueur]['pos'], (5, 0))
-            return path[0]
+            return path[1]
 
     def partie_terminée(self):
         """ ici je m'interesse seulement de savoir si le pion 1 est arrive à la position (x, 9) et donc il a gagne quel que soit x"""
