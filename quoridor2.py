@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import networkx as nx
 
 
@@ -28,13 +29,14 @@ class Quoridor:
             [joueur['pos'] for joueur in état['joueurs']],
             état['murs']['horizontaux'],
             état['murs']['verticaux'])
+        positions = {'B1': (5, 10), 'B2': (5, 0)}
         if joueur == 0:
             path = nx.shortest_path(
-                graphe, état['joueurs'][joueur]['pos'], (5, 10))
+                graphe, tuple(état['joueurs'][joueur]['pos']), 'B1')
             return path[1]
         if joueur == 1:
             path = nx.shortest_path(
-                graphe, état['joueurs'][joueur]['pos'], (5, 0))
+                graphe, tuple(état['joueurs'][joueur]['pos']), 'B2')
             return path[1]
 
     def partie_terminée(self):
@@ -62,11 +64,11 @@ class Quoridor:
         if self.état['joueurs'][joueur]['murs'] == 0:
             raise QuoridorError
         if orientation == 'vertical':
-            self.état = self.état['murs']['verticaux'].append(position)
-            self.état['joueurs'][joueur]['murs'] -= 1
+            self.état['murs']['verticaux'].append(list(position))
+            self.état['joueurs'][joueur]['murs'] += -1
         if orientation == 'horizontal':
-            self.état == self.état['murs']['horizontaux'].append(position)
-            self.état['joueurs'][joueur]['murs'] -= 1
+            self.état['murs']['horizontaux'].append(list(position))
+            self.état['joueurs'][joueur]['murs'] += -1
 
 
 def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
@@ -135,3 +137,24 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 1), 'B2')
 
     return graphe
+
+
+"""état = {
+    "joueurs": [
+        {"nom": "idul", "murs": 7, "pos": [5, 3]},
+        {"nom": "automate", "murs": 3, "pos": [5, 6]}
+    ],
+    "murs": {
+        "horizontaux": [[4, 4], [2, 6], [3, 8], [5, 8], [7, 8]],
+        "verticaux": [[6, 2], [4, 4], [2, 5], [7, 5], [7, 7]]
+    }
+}
+graphe = construire_graphe(
+    [joueur['pos'] for joueur in état['joueurs']],
+    état['murs']['horizontaux'],
+    état['murs']['verticaux'])
+plt.show()
+jeu = Quoridor(état)
+jeu.placer_mur(1, (3, 5), 'vertical')
+print(jeu.état_partie())"""
+# case de test
