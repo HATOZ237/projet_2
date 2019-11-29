@@ -242,7 +242,7 @@ class Quoridor:
         for mur in self.partie['état']['murs']['verticaux']:
             if mur == position:
                 raise QuoridorError
-        #----------------tu as oublié de tenir compte de l'espace nééssaire pour un mur 
+        #----------------tu as oublié de tenir compte de l'espace nécéssaire pour un mur 
         #-------cad tenir compte des murs adjacants car les murs sont de longeurs de deux cases
         #-------Ne peut-on pas lister les positions disponobles pour les murs avec Networkx ??????
         
@@ -260,7 +260,7 @@ class Quoridor:
             self.partie['état'] = (self.partie['état']['murs']['verticaux']).append(position)
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
         if orientation == 'horizontal':
-            self.partie['état'] == (self.partie['état']['murs']['horizontaux']).append(position)
+            (self.partie['état']['murs']['horizontaux']).append(position)
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
 
 
