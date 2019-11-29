@@ -106,7 +106,7 @@ class Quoridor:
         # creation d'une matrice vide
         ligne = 21
         colone = 39
-        numerotation = 9
+        num = 9
         matrice = []
         place1 = état_partie["joueurs"][0]['nom']
         place2 = état_partie["joueurs"][1]['nom']
@@ -120,8 +120,8 @@ class Quoridor:
             matrice[i][2] = '|'
             matrice[i][38] = '|'
             if (i % 2) == 0:
-                matrice[i][0] = str(numerotation)
-                numerotation -= 1
+                matrice[i][0] = str(num)
+                num -= 1
                 for j in range(1, 10):
                     matrice[i][4*j] = '.'
         # déchiffrage du json
@@ -218,10 +218,10 @@ class Quoridor:
 
             #si le joueur 1 est à la position (x, 9)
         if self.partie['état']['joueurs'][0]['pos'][1] == 9:
-            return self.état['joueurs'][0]['nom']
+            return self.partie['état']['joueurs'][0]['nom']
             # si le joueur 2 est à la position (x, 1) 
         elif self.partie['état']['joueurs'][1]['pos'][1] == 1:
-            return self.état['joueurs'][1]['nom']
+            return self.partie['état']['joueurs'][1]['nom']
         else:
             #si personne ne gagne
             return False
@@ -242,7 +242,7 @@ class Quoridor:
         for mur in self.partie['état']['murs']['verticaux']:
             if mur == position:
                 raise QuoridorError
-        #----------------tu as oublié de tenir compte de l'espace nééssaire pour un mur 
+        #----------------tu as oublié de tenir compte de l'espace nécéssaire pour un mur 
         #-------cad tenir compte des murs adjacants car les murs sont de longeurs de deux cases
         #-------Ne peut-on pas lister les positions disponobles pour les murs avec Networkx ??????
         
@@ -260,7 +260,7 @@ class Quoridor:
             self.partie['état'] = (self.partie['état']['murs']['verticaux']).append(position)
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
         if orientation == 'horizontal':
-            self.partie['état'] == (self.partie['état']['murs']['horizontaux']).append(position)
+            (self.partie['état']['murs']['horizontaux']).append(position)
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
 
 
