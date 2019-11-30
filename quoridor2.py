@@ -1,5 +1,6 @@
 import networkx as nx
 from copy import deepcopy
+from random import randint
 
 
 class QuoridorError(Exception):
@@ -189,13 +190,13 @@ class Quoridor:
             self.partie['état']["joueurs"][joueur-1]["pos"] = list(position)
 
     def jouer_coup(self, joueur):
-        """ à un niveau je ne compends plus ce que je fais donc 
+        """ à un niveau je ne comprends plus ce que je fais donc
         laisse seulement"""
-        #si le numéro du joueur est autre que 1 ou 2
-        if not(joueur in [1,2]):
+        # si le numéro du joueur est autre que 1 ou 2
+        if not(joueur in [1, 2]):
             raise QuoridorError
 
-        #si la partie est terminée
+        # si la partie est terminée
         if self.partie_terminée() != False:
             raise QuoridorError
 
@@ -206,24 +207,20 @@ class Quoridor:
             état['murs']['verticaux'])
         if joueur == 0:
             path = nx.shortest_path(
-                graphe, état['joueurs'][joueur]['pos'], (5, 10))
-            return path[0]
-        if joueur == 1:
-            path = nx.shortest_path(
-                graphe, état['joueurs'][joueur]['pos'], (5, 0))
+                graphe, état['joueurs'][joueur-1]['pos'], (5, 10))
             return path[0]
 
     def partie_terminée(self):
         """ Déterminer si la partie est terminée."""
 
-            #si le joueur 1 est à la position (x, 9)
+            # si le joueur 1 est à la position (x, 9)
         if self.partie['état']['joueurs'][0]['pos'][1] == 9:
             return self.partie['état']['joueurs'][0]['nom']
-            # si le joueur 2 est à la position (x, 1) 
+            # si le joueur 2 est à la position (x, 1)
         elif self.partie['état']['joueurs'][1]['pos'][1] == 1:
             return self.partie['état']['joueurs'][1]['nom']
         else:
-            #si personne ne gagne
+            # si personne ne gagne
             return False
 
     def placer_mur(self, joueur, position, orientation):
@@ -231,36 +228,38 @@ class Quoridor:
         Pour le joueur spécifié, placer un mur à la position spécifiée.
 
         """
-        #si le numéro du joueur est autre que 1 ou 2
-        if not(joueur in [1,2]):
+        # si le numéro du joueur est autre que 1 ou 2
+        [a, b] = position
+        if not(joueur in [1, 2]):
             raise QuoridorError
 
-        #si un mur occupe déjà cette position
+        # si un mur occupe déjà cette position
         for mur in self.partie['état']['murs']['horizontaux']:
             if position == mur:
                 raise QuoridorError
         for mur in self.partie['état']['murs']['verticaux']:
             if mur == position:
                 raise QuoridorError
-        #----------------tu as oublié de tenir compte de l'espace nécéssaire pour un mur 
-        #-------cad tenir compte des murs adjacants car les murs sont de longeurs de deux cases
-        #-------Ne peut-on pas lister les positions disponobles pour les murs avec Networkx ??????
-        
-        #si la position est invalide pour cette orientation
-        [a, b] = position 
-        if not((1 <= a <= 8) and (1 <= b <= 8)):
+        if orientation == 'vertical':
+            for liste in self.partie['état']['murs']['verticaux']:
+                if liste == [a+1, b]:
+                    raise QuoridorError
+        # si la position est invalide pour cette orientation
+        if not((1 <= a <= 8) and (2 <= b <= 9)) and orientation == 'vertical':
             raise QuoridorError
-        
-        #si le joueur a déjà placé tous ses murs
+        if not((2 <= a <= 9) and (1 <= b <= 8)) and orientation == 'horizontal':
+            raise QuoridorError
+
+        # si le joueur a déjà placé tous ses murs
         if self.partie['état']['joueurs'][joueur-1]['murs'] == 0:
             raise QuoridorError
-        
-        #insertion des murs horizontaux et verticaux 
+
+        # insertion des murs horizontaux et verticaux
         if orientation == 'vertical':
-            self.partie['état'] = (self.partie['état']['murs']['verticaux']).append(position)
+            self.partie['état']['murs']['verticaux'].append(list(position))
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
         if orientation == 'horizontal':
-            (self.partie['état']['murs']['horizontaux']).append(position)
+            self.partie['état']['murs']['horizontaux'].append(list(position))
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
 
 
@@ -268,7 +267,7 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
     """
     Crée le graphe des déplacements admissibles pour les joueurs.
     """
-    graphe = nx.DiGraph()
+    graphe=nx.DiGraph()
 
     # pour chaque colonne du damier
     for x in range(1, 10):
@@ -306,7 +305,7 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
             graphe.remove_edge(prédécesseur, joueur)
 
             # si admissible, ajouter un lien sauteur
-            successeur = (2*joueur[0]-prédécesseur[0],
+            successeur=(2*joueur[0]-prédécesseur[0],
                           2*joueur[1]-prédécesseur[1])
 
             if successeur in graphe.successors(joueur) and successeur not in joueurs:
@@ -327,6 +326,6 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
     return graphe
 
 
-Q1 = Quoridor([{'nom': 'tsmum',
+Q1=Quoridor([{'nom': 'tsmum',
                 'murs': 10, 'pos': [7, 8]}, 'robot'],
               {'horizontaux': [], 'verticaux': []})
