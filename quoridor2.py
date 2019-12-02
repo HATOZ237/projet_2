@@ -324,8 +324,3 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 1), 'B2')
 
     return graphe
-
-
-Q1=Quoridor([{'nom': 'tsmum',
-                'murs': 10, 'pos': [7, 8]}, 'robot'],
-              {'horizontaux': [], 'verticaux': []})
