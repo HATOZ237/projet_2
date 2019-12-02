@@ -388,3 +388,4 @@ jeu = Quoridor(état['joueurs'], état['murs'])
 print(jeu.état_partie())
 jeu.placer_mur(2, (2, 4), 'horizontal')
 print(jeu.état_partie())
+
