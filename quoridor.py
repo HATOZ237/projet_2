@@ -262,8 +262,6 @@ class Quoridor:
             raise QuoridorError
         if not((1 <= a <= 8) and (2 <= b <= 9)) and orientation == 'horizontal':
             raise QuoridorError
-        if 1:
-            pass
 
         # si le joueur a déjà placé tous ses murs
         if self.partie['état']['joueurs'][joueur-1]['murs'] == 0:
