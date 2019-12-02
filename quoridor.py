@@ -12,7 +12,7 @@ class QuoridorError(Exception):
     lorsque la classe Quoridor a des problèmes
     """
 
-
+    
 class Quoridor:
     """
     Cette classe dÉfinit les élements de type Quoridor
@@ -218,7 +218,8 @@ class Quoridor:
             raise QuoridorError
 
         # si la partie est terminée
-        if self.partie_terminée() != False:
+        a = self.partie_terminée()
+        if a != False:
             raise QuoridorError
 
         état = self.état_partie()
@@ -227,7 +228,7 @@ class Quoridor:
             état['murs']['horizontaux'],
             état['murs']['verticaux'])
         path = [nx.shortest_path(
-                graphe, état['joueurs'][joueur-1]['pos'], (5, 0)), nx.shortest_path(
+            graphe, état['joueurs'][joueur-1]['pos'], (5, 0)), nx.shortest_path(
                 graphe, état['joueurs'][joueur-1]['pos'], (5, 10))]
         self.déplacer_jeton(joueur, path[joueur-1][1])
 
@@ -340,3 +341,4 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 1), 'B2')
     return graphe
     
+
