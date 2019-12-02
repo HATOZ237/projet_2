@@ -6,20 +6,18 @@ from copy import deepcopy
 import networkx as nx
 
 
-
-
 class QuoridorError(Exception):
     """
     Cette classe retourne des erreurs
     lorsque la classe Quoridor a des problèmes
     """
-    pass
 
 
 class Quoridor:
     """
     Cette classe dÉfinit les élements de type Quoridor
     """
+
     def __init__(self, joueurs, murs=None):
         """
         Initialiser une partie de Quoridor avec les joueurs et les murs spécifiés,
@@ -29,7 +27,7 @@ class Quoridor:
 
         # si joueurs n'est pas itérable
         if(not isinstance(joueurs, list) and not isinstance(joueurs, tuple)
-             and not isinstance(joueurs, dict)):
+           and not isinstance(joueurs, dict)):
             raise QuoridorError
 
         # si l'itérable de joueurs en contient plus de deux.
@@ -44,19 +42,19 @@ class Quoridor:
 
                 # si la position d'un joueur est invalide
                 for coord_pos in joueur['pos']:
-                    if not (coord_pos in range(1, 10)):
+                    if not coord_pos in range(1, 10):
                         raise QuoridorError
 
         # si murs n'est pas un dictionnaire lorsque présent.
-        if murs.values != [] and not(isinstance(murs, dict)):
+        if murs.values != [] and not isinstance(murs, dict):
             raise QuoridorError
 
         # si le total des murs placés et plaçables n'est pas égal à 20
         count = 0
         for joueur in joueurs:
-            if(isinstance(joueur, str)):
+            if isinstance(joueur, str):
                 count += 10
-            elif(isinstance(joueur, dict)):
+            elif isinstance(joueur, dict):
                 count += int(joueur['murs'])
         if murs != {}:
             count += len(murs['horizontaux'])
@@ -72,8 +70,8 @@ class Quoridor:
             for coord_pos in murs['verticaux']:
                 if not coord_pos[0] in range(2, 10) or not coord_pos[1] in range(1, 9):
                     raise QuoridorError
-        
-        #si un element est inséré deux fois
+
+        # si un element est inséré deux fois
         for i in murs['horizontaux']:
             count = 0
             for j in murs['horizontaux']:
@@ -81,7 +79,6 @@ class Quoridor:
                     count += 1
             if count > 1:
                 raise QuoridorError
-        
         for i in murs['verticaux']:
             count = 0
             for j in murs['verticaux']:
@@ -128,7 +125,7 @@ class Quoridor:
     def __str__(self):
         """
         Produire la représentation en art ascii correspondant à l'état
-         actuel de la partie.
+        actuel de la partie.
         Cette représentation est la même que celle du TP précédent.
         retourner : la chaîne de caractères de la représentation.
         """
@@ -235,27 +232,25 @@ class Quoridor:
             état['murs']['horizontaux'],
             état['murs']['verticaux'])
         path = [nx.shortest_path(
-                graphe, état['joueurs'][joueur-1]['pos'], (5, 0)), nx.shortest_path(
-                graphe, état['joueurs'][joueur-1]['pos'], (5, 10))]
+            graphe, état['joueurs'][joueur-1]['pos'], (5, 0)), nx.shortest_path(
+            graphe, état['joueurs'][joueur-1]['pos'], (5, 10))]
         self.déplacer_jeton(joueur, path[joueur-1][1])
-            
+
     def partie_terminée(self):
         """ Déterminer si la partie est terminée.
         """
-            # si le joueur 1 est à la position (x, 9)
+        # si le joueur 1 est à la position (x, 9)
         if self.partie['état']['joueurs'][0]['pos'][1] == 9:
             return self.partie['état']['joueurs'][0]['nom']
             # si le joueur 2 est à la position (x, 1)
-        elif self.partie['état']['joueurs'][1]['pos'][1] == 1:
+        if self.partie['état']['joueurs'][1]['pos'][1] == 1:
             return self.partie['état']['joueurs'][1]['nom']
-        else:
-            # si personne ne gagne
-            return False
+        # si personne ne gagne
+        return False
 
     def placer_mur(self, joueur, position, orientation):
         """
         Pour le joueur spécifié, placer un mur à la position spécifiée.
-
         """
         # si le numéro du joueur est autre que 1 ou 2
         a, b = position
@@ -331,8 +326,8 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
             graphe.remove_edge(prédécesseur, joueur)
 
             # si admissible, ajouter un lien sauteur
-            successeur=(2*joueur[0]-prédécesseur[0],
-                        2*joueur[1]-prédécesseur[1])
+            successeur = (2*joueur[0]-prédécesseur[0],
+                          2*joueur[1]-prédécesseur[1])
 
             if successeur in graphe.successors(joueur) and successeur not in joueurs:
                 # ajouter un saut en ligne droite
