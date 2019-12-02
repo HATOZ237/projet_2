@@ -220,16 +220,14 @@ class Quoridor:
         # si la partie est terminée
         if self.partie_terminée() != False:
             raise QuoridorError
-
         état = self.état_partie()
         graphe = construire_graphe(
             [joueur['pos'] for joueur in état['joueurs']],
             état['murs']['horizontaux'],
             état['murs']['verticaux'])
         positions = {'B1': (5, 10), 'B2': (5, 0)}
-        path = [nx.shortest_path(
-                graphe, état['joueurs'][joueur-1]['pos'], 'B1'), nx.shortest_path(
-                graphe, état['joueurs'][joueur-1]['pos'], 'B2')]
+        path = [nx.shortest_path(graphe, état['joueurs'][0]['pos'], 'B1'),
+                nx.shortest_path(graphe, état['joueurs'][1]['pos'], 'B2')]
         self.déplacer_jeton(joueur, path[joueur-1][1])
 
     def partie_terminée(self):
@@ -295,7 +293,7 @@ def verify(pos, état, ori, j):
         état['murs']['horizontaux'],
         état['murs']['verticaux'])
     positions = {'B1': (5, 10), 'B2': (5, 0)}
-    # je place d'abord le mur puis je retourne true ou false si il bloque 
+    # je place d'abord le mur puis je retourne true ou false si il bloque
     if ori == 'horizontal':
         état['murs']['horizontaux'].append(pos)
         if j == 0:
@@ -370,20 +368,3 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 9), 'B1')
         graphe.add_edge((x, 1), 'B2')
     return graphe
-
-
-état = {
-    "joueurs": [
-        {"nom": "idul", "murs": 7, "pos": (5, 1)},
-        {"nom": "automate", "murs": 3, "pos": (5, 7)}
-    ],
-    "murs": {
-        "horizontaux": [(4, 4), (2, 6), (3, 8), (5, 8), (7, 8)],
-        "verticaux": [(6, 2), (4, 4), (2, 5), (7, 5), (7, 7)]
-    }
-}
-
-jeu = Quoridor(état['joueurs'], état['murs'])
-print(jeu.état_partie())
-jeu.placer_mur(2, (2, 4), 'horizontal')
-print(jeu.état_partie())
