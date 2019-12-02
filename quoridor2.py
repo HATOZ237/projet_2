@@ -60,6 +60,23 @@ class Quoridor:
             for coord_pos in murs['verticaux']:
                 if not (coord_pos[0] in range(2, 10)) or not (coord_pos[1] in range(1, 9)):
                     raise QuoridorError
+        
+        #si un element est inséré deux fois
+        for i in murs['horizontaux']:
+            count = 0
+            for j in murs['horizontaux']:
+                if i == j:
+                    count += 1
+            if count > 1:
+                raise QuoridorError
+        
+        for i in murs['verticaux']:
+            count = 0
+            for j in murs['verticaux']:
+                if i == j:
+                    count += 1
+            if count > 1:
+                raise QuoridorError
 
         # ------------------------initialisation---------------
 
@@ -320,3 +337,5 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 1), 'B2')
 
     return graphe
+
+ 
