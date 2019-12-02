@@ -340,4 +340,3 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
 
     return graphe
 
- 
