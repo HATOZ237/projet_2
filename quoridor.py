@@ -63,7 +63,7 @@ class Quoridor:
             raise QuoridorError
 
         # si la position d'un mur est invalide.
-        if murs.values != {}:
+        if murs.values != []:
             for coord_pos in murs['horizontaux']:
                 if not coord_pos[0] in range(1, 9) or not coord_pos[1] in range(2, 10):
                     raise QuoridorError
@@ -110,7 +110,7 @@ class Quoridor:
 
         # initialisation des murs
         mur_horizontaux = mur_verticaux = []
-        if murs.values != {}:
+        if murs.values != []:
             mur_horizontaux = murs['horizontaux']
             mur_verticaux = murs['verticaux']
 
@@ -129,8 +129,6 @@ class Quoridor:
         """
         état_partie = deepcopy(self.partie['état'])
         # creation d'une matrice vide
-        
-        
         num = 9
         matrice = []
         place1 = état_partie["joueurs"][0]['nom']
@@ -154,7 +152,6 @@ class Quoridor:
         j2 = état_partie["joueurs"][1]["pos"]
         mh = état_partie["murs"]["horizontaux"]
         mv = état_partie["murs"]["verticaux"]
-
         # incorporation des élements du jeu : joueurs et murs
         # convertit les coordonnées des joueurs
         for i in [j1, j2]:
@@ -221,8 +218,7 @@ class Quoridor:
             raise QuoridorError
 
         # si la partie est terminée
-        terminé = self.partie_terminée()
-        if terminé != False:
+        if self.partie_terminée() != False:
             raise QuoridorError
 
         état = self.état_partie()
@@ -231,9 +227,8 @@ class Quoridor:
             état['murs']['horizontaux'],
             état['murs']['verticaux'])
         path = [nx.shortest_path(
-            graphe, état['joueurs'][joueur-1]['pos'], (5, 0)), nx.shortest_path(
-            graphe, état['joueurs'][joueur-1]['pos'], (5, 10))
-        ]
+                graphe, état['joueurs'][joueur-1]['pos'], (5, 0)), nx.shortest_path(
+                graphe, état['joueurs'][joueur-1]['pos'], (5, 10))]
         self.déplacer_jeton(joueur, path[joueur-1][1])
 
     def partie_terminée(self):
@@ -344,3 +339,4 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 9), 'B1')
         graphe.add_edge((x, 1), 'B2')
     return graphe
+    
