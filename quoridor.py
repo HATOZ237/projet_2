@@ -91,8 +91,6 @@ class Quoridor:
 
         partie = {}
         # initialisation des joueurs
-        if isinstance(joueurs, list):
-            pass
         if isinstance(joueurs, tuple):
             joueurs = list(joueurs)
         if isinstance(joueurs, dict):
@@ -131,19 +129,19 @@ class Quoridor:
         """
         état_partie = deepcopy(self.partie['état'])
         # creation d'une matrice vide
-        ligne = 21
-        colone = 39
+        
+        
         num = 9
         matrice = []
         place1 = état_partie["joueurs"][0]['nom']
         place2 = état_partie["joueurs"][1]['nom']
         matrice.append(['Légende: 1={}, 2={}'.format(place1, place2)])
         matrice.append(['   -----------------------------------'])
-        for i in range(2, ligne-2):
-            matrice.append([' ']*colone)
+        for i in range(2, 19):
+            matrice.append([' ']*39)
         matrice.append(['--|-----------------------------------'])
         matrice.append(['  | 1   2   3   4   5   6   7   8   9'])
-        for i in range(2, ligne-2):
+        for i in range(2, 19):
             matrice[i][2] = '|'
             matrice[i][38] = '|'
             if (i % 2) == 0:
@@ -223,7 +221,8 @@ class Quoridor:
             raise QuoridorError
 
         # si la partie est terminée
-        if self.partie_terminée() != False:
+        terminé = self.partie_terminée()
+        if terminé != False:
             raise QuoridorError
 
         état = self.état_partie()
@@ -233,7 +232,8 @@ class Quoridor:
             état['murs']['verticaux'])
         path = [nx.shortest_path(
             graphe, état['joueurs'][joueur-1]['pos'], (5, 0)), nx.shortest_path(
-            graphe, état['joueurs'][joueur-1]['pos'], (5, 10))]
+            graphe, état['joueurs'][joueur-1]['pos'], (5, 10))
+        ]
         self.déplacer_jeton(joueur, path[joueur-1][1])
 
     def partie_terminée(self):
@@ -343,5 +343,4 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
     for x in range(1, 10):
         graphe.add_edge((x, 9), 'B1')
         graphe.add_edge((x, 1), 'B2')
-
     return graphe
