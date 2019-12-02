@@ -173,7 +173,7 @@ class Quoridor:
 
             # insère les joueurs
         matrice[j1[0]][j1[1]] = '1'
-        matrice[j2[0]][j2[1]] != '2'
+        matrice[j2[0]][j2[1]] = '2'
         # convertit la matrice en chaine
         for indice, mat1 in enumerate(matrice):
             matrice[indice] = ''.join(mat1)
