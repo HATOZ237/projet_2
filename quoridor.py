@@ -226,9 +226,10 @@ class Quoridor:
             [joueur['pos'] for joueur in état['joueurs']],
             état['murs']['horizontaux'],
             état['murs']['verticaux'])
+        positions = {'B1': (5, 10), 'B2': (5, 0)}
         path = [nx.shortest_path(
-                graphe, état['joueurs'][joueur-1]['pos'], (5, 0)), nx.shortest_path(
-                graphe, état['joueurs'][joueur-1]['pos'], (5, 10))]
+                graphe, état['joueurs'][joueur-1]['pos'], 'B1'), nx.shortest_path(
+                graphe, état['joueurs'][joueur-1]['pos'], 'B2')]
         self.déplacer_jeton(joueur, path[joueur-1][1])
 
     def partie_terminée(self):
@@ -257,9 +258,16 @@ class Quoridor:
             raise QuoridorError
         if position in self.partie['état']['murs']['verticaux'] and orientation == "vertical":
             raise QuoridorError
-        if orientation == 'horizontal' and (a+1, b) in self.partie['état']['murs']['horizontaux']:
-            raise QuoridorError
-
+        if orientation == 'horizontal':
+            p1 = (a+1, b)
+            p2 = (a-1, b)
+            if p1 or p2 in self.partie['état']['murs']['horizontaux']:
+                raise QuoridorError
+        if orientation == 'horizontal':
+            p1 = (a, b+1)
+            p2 = (a, b-1)
+            if p1 or p2 in self.partie['état']['murs']['horizontaux']:
+                raise QuoridorError
         # si la position est invalide pour cette orientation
         if not((2 <= a <= 9) and (1 <= b <= 8)) and orientation == 'vertical':
             raise QuoridorError
@@ -269,7 +277,8 @@ class Quoridor:
         # si le joueur a déjà placé tous ses murs
         if self.partie['état']['joueurs'][joueur-1]['murs'] == 0:
             raise QuoridorError
-
+        if not verify((a, b), self.partie['état'], orientation, joueur-1):
+            raise QuoridorError
         # insertion des murs horizontaux et verticaux
         if orientation == 'vertical':
             self.partie['état']['murs']['verticaux'].append(position)
@@ -277,6 +286,28 @@ class Quoridor:
         if orientation == 'horizontal':
             self.partie['état']['murs']['horizontaux'].append(position)
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
+
+
+def verify(pos, état, ori, j):
+    """ je veux verifier si le mur qui vient ne bloque pas le joueur adverse"""
+    graphe = construire_graphe(
+        [joueur['pos'] for joueur in état['joueurs']],
+        état['murs']['horizontaux'],
+        état['murs']['verticaux'])
+    positions = {'B1': (5, 10), 'B2': (5, 0)}
+    # je place d'abord le mur puis je retourne true ou false si il bloque 
+    if ori == 'horizontal':
+        état['murs']['horizontaux'].append(pos)
+        if j == 0:
+            return nx.has_path(graphe, état['joueurs'][1]['pos'], 'B2')
+        if j == 1:
+            return nx.has_path(graphe, état['joueurs'][0]['pos'], 'B1')
+    if ori == 'vertical':
+        état['murs']['verticaux'].append(pos)
+        if j == 0:
+            return nx.has_path(graphe, état['joueurs'][1]['pos'], 'B2')
+        if j == 1:
+            return nx.has_path(graphe, état['joueurs'][0]['pos'], 'B1')
 
 
 def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
@@ -339,4 +370,20 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 9), 'B1')
         graphe.add_edge((x, 1), 'B2')
     return graphe
-    
+
+
+état = {
+    "joueurs": [
+        {"nom": "idul", "murs": 7, "pos": (5, 1)},
+        {"nom": "automate", "murs": 3, "pos": (5, 7)}
+    ],
+    "murs": {
+        "horizontaux": [(4, 4), (2, 6), (3, 8), (5, 8), (7, 8)],
+        "verticaux": [(6, 2), (4, 4), (2, 5), (7, 5), (7, 7)]
+    }
+}
+
+jeu = Quoridor(état['joueurs'], état['murs'])
+print(jeu.état_partie())
+jeu.placer_mur(2, (2, 4), 'horizontal')
+print(jeu.état_partie())
