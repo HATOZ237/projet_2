@@ -1,6 +1,6 @@
 import networkx as nx
 from copy import deepcopy
-from random import randint
+
 
 
 class QuoridorError(Exception):
@@ -205,11 +205,10 @@ class Quoridor:
             [joueur['pos'] for joueur in état['joueurs']],
             état['murs']['horizontaux'],
             état['murs']['verticaux'])
-        if joueur == 0:
-            path = nx.shortest_path(
-                graphe, état['joueurs'][joueur-1]['pos'], (5, 10))
-            return path[0]
-
+        path = nx.shortest_path(
+            graphe, état['joueurs'][joueur-1]['pos'], (5, 10))
+        self.déplacer_jeton(joueur, path[1])
+            
     def partie_terminée(self):
         """ Déterminer si la partie est terminée."""
 
@@ -234,8 +233,7 @@ class Quoridor:
             raise QuoridorError
 
         # si un mur occupe déjà cette position
-        for mur in self.partie['état']['murs']['horizontaux']:
-            if position == mur:
+        if list(position) in self.partie['état']['murs']['horizontaux']:
                 raise QuoridorError
         for mur in self.partie['état']['murs']['verticaux']:
             if mur == position:
@@ -245,9 +243,9 @@ class Quoridor:
                 if liste == [a+1, b]:
                     raise QuoridorError
         # si la position est invalide pour cette orientation
-        if not((1 <= a <= 8) and (2 <= b <= 9)) and orientation == 'vertical':
+        if not((2 <= a <= 9) and (1 <= b <= 8)) and orientation == 'vertical':
             raise QuoridorError
-        if not((2 <= a <= 9) and (1 <= b <= 8)) and orientation == 'horizontal':
+        if not((1 <= a <= 8) and (2 <= b <= 9)) and orientation == 'horizontal':
             raise QuoridorError
 
         # si le joueur a déjà placé tous ses murs
