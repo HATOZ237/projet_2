@@ -205,9 +205,10 @@ class Quoridor:
             [joueur['pos'] for joueur in état['joueurs']],
             état['murs']['horizontaux'],
             état['murs']['verticaux'])
-        path = nx.shortest_path(
-            graphe, état['joueurs'][joueur-1]['pos'], (5, 10))
-        self.déplacer_jeton(joueur, path[1])
+        path = [nx.shortest_path(
+            graphe, état['joueurs'][joueur-1]['pos'], (5, 0)), nx.shortest_path(
+            graphe, état['joueurs'][joueur-1]['pos'], (5, 10))]
+        self.déplacer_jeton(joueur, path[joueur-1][1])
             
     def partie_terminée(self):
         """ Déterminer si la partie est terminée."""
@@ -228,20 +229,17 @@ class Quoridor:
 
         """
         # si le numéro du joueur est autre que 1 ou 2
-        [a, b] = position
+        a, b = position
         if not(joueur in [1, 2]):
             raise QuoridorError
 
         # si un mur occupe déjà cette position
-        if list(position) in self.partie['état']['murs']['horizontaux']:
+        if position in self.partie['état']['murs']['horizontaux'] and orientation == 'horizontal':
             raise QuoridorError
-        for mur in self.partie['état']['murs']['verticaux']:
-            if mur == position:
-                raise QuoridorError
-        if orientation == 'vertical':
-            for liste in self.partie['état']['murs']['verticaux']:
-                if liste == [a+1, b]:
-                    raise QuoridorError
+        if position in self.partie['état']['murs']['verticaux'] and orientation == "vertical":
+            raise QuoridorError
+        if orientation == 'horizontal' and (a+1, b) in self.partie['état']['murs']['horizontaux']:
+            raise QuoridorError
         # si la position est invalide pour cette orientation
         if not((2 <= a <= 9) and (1 <= b <= 8)) and orientation == 'vertical':
             raise QuoridorError
@@ -254,10 +252,10 @@ class Quoridor:
 
         # insertion des murs horizontaux et verticaux
         if orientation == 'vertical':
-            self.partie['état']['murs']['verticaux'].append(list(position))
+            self.partie['état']['murs']['verticaux'].append(position)
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
         if orientation == 'horizontal':
-            self.partie['état']['murs']['horizontaux'].append(list(position))
+            self.partie['état']['murs']['horizontaux'].append(position)
             self.partie['état']['joueurs'][joueur-1]['murs'] -= 1
 
 
