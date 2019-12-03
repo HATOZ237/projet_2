@@ -185,12 +185,16 @@ class Quoridor:
         if orientation == 'horizontal':
             p1 = (a+1, b)
             p2 = (a-1, b)
-            if p1 or p2 in self.partie['état']['murs']['horizontaux']:
+            if p1 in self.partie['état']['murs']['horizontaux']:
+                raise QuoridorError
+            if p2 in self.partie['état']['murs']['horizontaux']:
                 raise QuoridorError
         if orientation == 'vertical':
             p1 = (a, b+1)
             p2 = (a, b-1)
-            if p1 or p2 in self.partie['état']['murs']['verticaux']:
+            if p1 in self.partie['état']['murs']['verticaux']:
+                raise QuoridorError
+            if p2 in self.partie['état']['murs']['verticaux']:
                 raise QuoridorError
         # si la position est invalide pour cette orientation
         if not((2 <= a <= 9) and (1 <= b <= 8)) and orientation == 'vertical':
