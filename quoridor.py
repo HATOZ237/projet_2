@@ -129,24 +129,7 @@ class Quoridor:
         """
         état_partie = deepcopy(self.partie['état'])
         # creation d'une matrice vide
-        num = 9
-        matrice = []
-        place1 = état_partie["joueurs"][0]['nom']
-        place2 = état_partie["joueurs"][1]['nom']
-        matrice.append(['Légende: 1={}, 2={}'.format(place1, place2)])
-        matrice.append(['   -----------------------------------'])
-        for i in range(2, 19):
-            matrice.append([' ']*39)
-        matrice.append(['--|-----------------------------------'])
-        matrice.append(['  | 1   2   3   4   5   6   7   8   9'])
-        for i in range(2, 19):
-            matrice[i][2] = '|'
-            matrice[i][38] = '|'
-            if (i % 2) == 0:
-                matrice[i][0] = str(num)
-                num -= 1
-                for j in range(1, 10):
-                    matrice[i][4*j] = '.'
+        matrice = créerMatriceVide()
         # déchiffrage du json
         j1 = état_partie["joueurs"][0]["pos"]
         j2 = état_partie["joueurs"][1]["pos"]
@@ -369,3 +352,26 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 9), 'B1')
         graphe.add_edge((x, 1), 'B2')
     return graphe
+
+def créerMatriceVide():
+    num = 9
+    matrice = []
+    place1 = état_partie["joueurs"][0]['nom']
+    place2 = état_partie["joueurs"][1]['nom']
+    matrice.append(['Légende: 1={}, 2={}'.format(place1, place2)])
+    matrice.append(['   -----------------------------------'])
+    for i in range(2, 19):
+        matrice.append([' ']*39)
+    matrice.append(['--|-----------------------------------'])
+    matrice.append(['  | 1   2   3   4   5   6   7   8   9'])
+    for i in range(2, 19):
+        matrice[i][2] = '|'
+        matrice[i][38] = '|'
+        if (i % 2) == 0:
+            matrice[i][0] = str(num)
+            num -= 1
+            for j in range(1, 10):
+                matrice[i][4*j] = '.'
+    return matrice
+
+
