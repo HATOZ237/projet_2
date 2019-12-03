@@ -24,68 +24,7 @@ class Quoridor:
         en s'assurant de faire une copie profonde de tout ce qui a besoin d'être copié.
         """
         # -----------------conditions--------------------
-
-        # si joueurs n'est pas itérable
-        if(not isinstance(joueurs, list) and not isinstance(joueurs, tuple)
-           and not isinstance(joueurs, dict)):
-            raise QuoridorError
-
-        # si l'itérable de joueurs en contient plus de deux.
-        if len(joueurs) > 2:
-            raise QuoridorError
-
-        for joueur in joueurs:
-            if isinstance(joueur, dict):
-                # si le nombre de murs qu'un joueur peut placer est >10, ou négatif
-                if joueur['murs'] > 10 or joueur['murs'] < 0:
-                    raise QuoridorError
-
-                # si la position d'un joueur est invalide
-                for coord_pos in joueur['pos']:
-                    if not coord_pos in range(1, 10):
-                        raise QuoridorError
-
-        # si murs n'est pas un dictionnaire lorsque présent.
-        if murs.values != [] and not isinstance(murs, dict):
-            raise QuoridorError
-
-        # si le total des murs placés et plaçables n'est pas égal à 20
-        count = 0
-        for joueur in joueurs:
-            if isinstance(joueur, str):
-                count += 10
-            elif isinstance(joueur, dict):
-                count += int(joueur['murs'])
-        if murs != {}:
-            count += len(murs['horizontaux'])
-            count += len(murs['verticaux'])
-        if count != 20:
-            raise QuoridorError
-
-        # si la position d'un mur est invalide.
-        if murs.values != []:
-            for coord_pos in murs['horizontaux']:
-                if not coord_pos[0] in range(1, 9) or not coord_pos[1] in range(2, 10):
-                    raise QuoridorError
-            for coord_pos in murs['verticaux']:
-                if not coord_pos[0] in range(2, 10) or not coord_pos[1] in range(1, 9):
-                    raise QuoridorError
-
-        # si un element est inséré deux fois
-        for i in murs['horizontaux']:
-            count = 0
-            for j in murs['horizontaux']:
-                if i == j:
-                    count += 1
-            if count > 1:
-                raise QuoridorError
-        for i in murs['verticaux']:
-            count = 0
-            for j in murs['verticaux']:
-                if i == j:
-                    count += 1
-            if count > 1:
-                raise QuoridorError
+        erreur_initialisation(joueurs, murs)
 
         # ------------------------initialisation---------------
 
@@ -378,3 +317,69 @@ def Matrice_Vide(état_partie):
     return matrice
 
 
+def erreur_initialisation(joueurs, murs=None):
+    """ Détecte les erreurs de syntaxe"""
+
+    if(not isinstance(joueurs, list) and not isinstance(joueurs, tuple)
+            and not isinstance(joueurs, dict)):
+        raise QuoridorError
+
+    # si l'itérable de joueurs en contient plus de deux.
+    if len(joueurs) > 2:
+        raise QuoridorError
+
+    for joueur in joueurs:
+        if isinstance(joueur, dict):
+            # si le nombre de murs qu'un joueur peut placer est >10, ou négatif
+            if joueur['murs'] > 10 or joueur['murs'] < 0:
+                raise QuoridorError
+
+            # si la position d'un joueur est invalide
+            for coord_pos in joueur['pos']:
+                if not coord_pos in range(1, 10):
+                    raise QuoridorError
+
+    # si murs n'est pas un dictionnaire lorsque présent.
+    if murs != None and not isinstance(murs, dict):
+        raise QuoridorError
+
+    # si le total des murs placés et plaçables n'est pas égal à 20
+    count = 0
+    for joueur in joueurs:
+        if isinstance(joueur, str):
+            count += 10
+        elif isinstance(joueur, dict):
+            count += int(joueur['murs'])
+
+    if murs != {}:
+        count += len(murs['horizontaux'])
+        count += len(murs['verticaux'])
+    if count != 20:
+        raise QuoridorError
+
+    # si la position d'un mur est invalide.
+    if murs.values != []:
+        for coord_pos in murs['horizontaux']:
+            if not coord_pos[0] in range(1, 9) or not coord_pos[1] in range(2, 10):
+                raise QuoridorError
+        for coord_pos in murs['verticaux']:
+            if not coord_pos[0] in range(2, 10) or not coord_pos[1] in range(1, 9):
+                raise QuoridorError
+
+    # si un element est inséré deux fois
+    for i in murs['horizontaux']:
+        count = 0
+        for j in murs['horizontaux']:
+            if i == j:
+                count += 1
+            if count > 1:
+                raise QuoridorError
+
+    for i in murs['verticaux']:
+        count = 0
+        for j in murs['verticaux']:
+            if i == j:
+                count += 1
+            if count > 1:
+                raise QuoridorError
+            
