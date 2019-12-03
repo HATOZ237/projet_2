@@ -24,7 +24,9 @@ class Quoridor:
         en s'assurant de faire une copie profonde de tout ce qui a besoin d'être copié.
         """
         # -----------------conditions--------------------
-        erreur_initialisation(joueurs, murs)
+        erreur_initialisation1(joueurs, murs)
+        erreur_initialisation2(joueurs, murs)
+        erreur_initialisation3(joueurs, murs)
 
         # ------------------------initialisation---------------
 
@@ -68,7 +70,7 @@ class Quoridor:
         """
         état_partie = deepcopy(self.partie['état'])
         # creation d'une matrice vide
-        matrice = Matrice_Vide(état_partie)
+        matrice = matrice_Vide(état_partie)
         # déchiffrage du json
         j1 = état_partie["joueurs"][0]["pos"]
         j2 = état_partie["joueurs"][1]["pos"]
@@ -293,7 +295,7 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
     return graphe
 
 
-def Matrice_Vide(état_partie):
+def matrice_Vide(état_partie):
     """ Crée une matrice vide
     """
     num = 9
@@ -317,11 +319,11 @@ def Matrice_Vide(état_partie):
     return matrice
 
 
-def erreur_initialisation(joueurs, murs=None):
+def erreur_initialisation1(joueurs, murs=None):
     """ Détecte les erreurs de syntaxe"""
 
     if(not isinstance(joueurs, list) and not isinstance(joueurs, tuple)
-            and not isinstance(joueurs, dict)):
+                    and not isinstance(joueurs, dict)):
         raise QuoridorError
 
     # si l'itérable de joueurs en contient plus de deux.
@@ -340,9 +342,11 @@ def erreur_initialisation(joueurs, murs=None):
                     raise QuoridorError
 
     # si murs n'est pas un dictionnaire lorsque présent.
-    if murs != None and not isinstance(murs, dict):
+    if murs.values != [] and not isinstance(murs, dict):
         raise QuoridorError
 
+
+def erreur_initialisation2(joueurs, murs=None):
     # si le total des murs placés et plaçables n'est pas égal à 20
     count = 0
     for joueur in joueurs:
@@ -366,6 +370,8 @@ def erreur_initialisation(joueurs, murs=None):
             if not coord_pos[0] in range(2, 10) or not coord_pos[1] in range(1, 9):
                 raise QuoridorError
 
+
+def erreur_initialisation3(joueurs, murs=None):
     # si un element est inséré deux fois
     for i in murs['horizontaux']:
         count = 0
@@ -382,4 +388,3 @@ def erreur_initialisation(joueurs, murs=None):
                 count += 1
             if count > 1:
                 raise QuoridorError
-            
