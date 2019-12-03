@@ -323,7 +323,7 @@ def erreur_initialisation1(joueurs, murs=None):
     """ Détecte les erreurs de syntaxe"""
 
     if(not isinstance(joueurs, list) and not isinstance(joueurs, tuple)
-         and not isinstance(joueurs, dict)):
+       and not isinstance(joueurs, dict)):
         raise QuoridorError
 
     for joueur in joueurs:
