@@ -129,7 +129,7 @@ class Quoridor:
         """
         état_partie = deepcopy(self.partie['état'])
         # creation d'une matrice vide
-        matrice = créerMatriceVide()
+        matrice = Matrice_Vide(état_partie)
         # déchiffrage du json
         j1 = état_partie["joueurs"][0]["pos"]
         j2 = état_partie["joueurs"][1]["pos"]
@@ -353,7 +353,10 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 1), 'B2')
     return graphe
 
-def créerMatriceVide():
+
+def Matrice_Vide(état_partie):
+    """ Crée une matrice vide
+    """
     num = 9
     matrice = []
     place1 = état_partie["joueurs"][0]['nom']
