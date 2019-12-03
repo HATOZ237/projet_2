@@ -369,21 +369,3 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
         graphe.add_edge((x, 9), 'B1')
         graphe.add_edge((x, 1), 'B2')
     return graphe
-
-
-état = {
-    "joueurs": [
-        {"nom": "idul", "murs": 7, "pos": (5, 1)},
-        {"nom": "automate", "murs": 3, "pos": (5, 7)}
-    ],
-    "murs": {
-        "horizontaux": [(4, 4), (2, 6), (3, 8), (5, 8), (7, 8)],
-        "verticaux": [(6, 2), (4, 4), (2, 5), (7, 5), (7, 7)]
-    }
-}
-
-jeu = Quoridor(état['joueurs'], état['murs'])
-print(jeu.état_partie())
-jeu.placer_mur(2, (2, 4), 'horizontal')
-print(jeu.état_partie())
-
