@@ -143,7 +143,8 @@ class Quoridor:
 
         # si la partie est terminée
         a = self.partie_terminée()
-        if a != False:
+        b = False
+        if a != b:
             raise QuoridorError
         état = self.état_partie()
         graphe = construire_graphe(
