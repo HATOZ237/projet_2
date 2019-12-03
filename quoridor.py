@@ -70,7 +70,7 @@ class Quoridor:
         """
         état_partie = deepcopy(self.partie['état'])
         # creation d'une matrice vide
-        matrice = matrice_Vide(état_partie)
+        matrice = matricee(état_partie)
         # déchiffrage du json
         j1 = état_partie["joueurs"][0]["pos"]
         j2 = état_partie["joueurs"][1]["pos"]
@@ -295,7 +295,7 @@ def construire_graphe(joueurs, murs_horizontaux, murs_verticaux):
     return graphe
 
 
-def matrice_Vide(état_partie):
+def matricee(état_partie):
     """ Crée une matrice vide
     """
     num = 9
@@ -323,11 +323,7 @@ def erreur_initialisation1(joueurs, murs=None):
     """ Détecte les erreurs de syntaxe"""
 
     if(not isinstance(joueurs, list) and not isinstance(joueurs, tuple)
-                    and not isinstance(joueurs, dict)):
-        raise QuoridorError
-
-    # si l'itérable de joueurs en contient plus de deux.
-    if len(joueurs) > 2:
+         and not isinstance(joueurs, dict)):
         raise QuoridorError
 
     for joueur in joueurs:
@@ -347,6 +343,7 @@ def erreur_initialisation1(joueurs, murs=None):
 
 
 def erreur_initialisation2(joueurs, murs=None):
+    """ Détecte les erreurs de syntaxe"""
     # si le total des murs placés et plaçables n'est pas égal à 20
     count = 0
     for joueur in joueurs:
@@ -372,6 +369,7 @@ def erreur_initialisation2(joueurs, murs=None):
 
 
 def erreur_initialisation3(joueurs, murs=None):
+    """ Détecte les erreurs de syntaxe"""
     # si un element est inséré deux fois
     for i in murs['horizontaux']:
         count = 0
@@ -380,6 +378,10 @@ def erreur_initialisation3(joueurs, murs=None):
                 count += 1
             if count > 1:
                 raise QuoridorError
+
+    # si l'itérable de joueurs en contient plus de deux.
+    if len(joueurs) > 2:
+        raise QuoridorError
 
     for i in murs['verticaux']:
         count = 0
