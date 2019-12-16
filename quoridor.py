@@ -390,3 +390,4 @@ def erreur_initialisation3(joueurs, murs=None):
                 count += 1
             if count > 1:
                 raise QuoridorError
+            
